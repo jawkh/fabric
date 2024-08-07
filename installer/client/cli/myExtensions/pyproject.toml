@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "tlen"
+version = "0.1.0"
+description = "Estimate Token Length using Tiktoken"
+authors = ["Jonathan AW <jonathan.aw.k.h@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.10"
+tiktoken = "^0.7.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+# Creates python "binaries"
+[tool.poetry.scripts]
+tlen = 'tlen:main'
