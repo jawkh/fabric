@@ -1,0 +1,63 @@
+--- /home/joncules/.local/lib/python3.10/site-packages/pymupdf4llm/helpers/pymupdf_rag.py	2024-08-09 16:45:49.157727339 +0800
++++ pymupdf_rag_modified.py	2024-08-09 16:35:18.263765460 +0800
+@@ -182,31 +182,35 @@
+     """
+     box_area = abs(box) * 0.9  # 90% of area of box
+ 
+-    for p in paths:
+-        if p["rect"] not in box:
+-            continue
+-        if p["type"] == "f" and set([i[0] for i in p["items"]]) == {"re"}:
+-            # only borderless rectangles are contained: ignore this path
+-            continue
+-        points = []  # list of points represented by the items.
+-        # We are going to append all the points as they occur.
+-        for itm in p["items"]:
+-            if itm[0] in ("l", "c"):  # line or curve
+-                points.extend(itm[1:])  # append all the points
+-            elif itm[0] == "q":  # quad
+-                q = itm[1]
+-                # follow corners anti-clockwise
+-                points.extend([q.ul, q.ll, q.lr, q.ur, q.ul])
+-            else:  # rectangles come in two flavors.
+-                # starting point is always top-left
+-                r = itm[1]
+-                if itm[-1] == 1:  # anti-clockwise (the standard)
+-                    points.extend([r.tl, r.bl, r.br, r.tr, r.tl])
+-                else:  # clockwise: area counts as negative
+-                    points.extend([r.tl, r.tr, r.br, r.bl, r.tl])
+-        area = poly_area(points)  # compute area of polygonclea
+-        if area < box_area:  # less than threshold: graphic is significant
+-            return True
++    try:
++        for p in paths:
++            if p["rect"] not in box:
++                continue
++            if p["type"] == "f" and set([i[0] for i in p["items"]]) == {"re"}:
++                # only borderless rectangles are contained: ignore this path
++                continue
++            points = []  # list of points represented by the items.
++            # We are going to append all the points as they occur.
++            for itm in p["items"]:
++                if itm[0] in ("l", "c"):  # line or curve
++                    points.extend(itm[1:])  # append all the points
++                elif itm[0] == "q":  # quad
++                    q = itm[1]
++                    # follow corners anti-clockwise
++                    points.extend([q.ul, q.ll, q.lr, q.ur, q.ul])
++                else:  # rectangles come in two flavors.
++                    # starting point is always top-left
++                    r = itm[1]
++                    if itm[-1] == 1:  # anti-clockwise (the standard)
++                        points.extend([r.tl, r.bl, r.br, r.tr, r.tl])
++                    else:  # clockwise: area counts as negative
++                        points.extend([r.tl, r.tr, r.br, r.bl, r.tl])
++            area = poly_area(points)  # compute area of polygon
++            if area < box_area:  # less than threshold: graphic is significant
++                return True
++    except Exception as e:
++        print(f"An error occurred: {e}")
++        return True
+     return False
+ 
+ 
